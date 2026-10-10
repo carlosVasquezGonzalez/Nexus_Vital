@@ -11,5 +11,5 @@ Este proyecto contiene la arquitectura base de microservicios desarrollada con *
 
 ## Instrucciones de Ejecución
 1. Clonar el repositorio: \git clone https://github.com/carlosVasquezGonzalez/Nexus_Vital.git\`n2. Crear la BD \
-exusvital_db\ en MySQL.
+exusvital_db\ en MySQL de laragon.
 3. Entrar a cada carpeta de microservicio, compilar con \./mvnw clean package -DskipTests\ y ejecutar el archivo JAR de la carpeta target con \java -jar target/<nombre-microservicio>.jar\.
