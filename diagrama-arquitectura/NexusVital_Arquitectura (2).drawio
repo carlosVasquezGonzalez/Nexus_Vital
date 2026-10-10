@@ -1,0 +1,194 @@
+<mxfile host="app.diagrams.net" modified="2026-08-27T00:00:00.000Z" agent="Claude" version="24.0.0" type="device">
+  <diagram name="Arquitectura NexusVital" id="nexusvital-arch">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="Diagrama de Arquitectura — NexusVital" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1F6FB2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="10" width="500" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Actors -->
+        <mxCell id="actorPaciente" value="Paciente" style="shape=actor;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="actorMedico" value="Médico / Hospital" style="shape=actor;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="210" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="actorAdmin" value="Administración Hospital" style="shape=actor;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="40" y="600" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="actorDevOps" value="DevOps" style="shape=actor;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="40" y="680" width="100" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Web/App + Gateway -->
+        <mxCell id="webapp" value="NexusVital&#10;Web / App" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2f3542;strokeColor=#000000;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="150" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="gateway" value="API Gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3498db;strokeColor=#1F6FB2;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="150" width="140" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Microservices container -->
+        <mxCell id="msContainer" value="Microservicios" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#3498db;verticalAlign=top;fontColor=#3498db;fontStyle=1;fontSize=14;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="600" y="60" width="380" height="600" as="geometry" />
+        </mxCell>
+
+        <!-- Gestion de Usuarios -->
+        <mxCell id="msGestion" value="Gestión de Usuarios" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#27ae60;strokeColor=#1e8449;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="630" y="100" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dbGestion" value="BD Usuarios" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#8e44ad;strokeColor=#5b2c6f;fontColor=#ffffff;boundedLbl=1;" vertex="1" parent="1">
+          <mxGeometry x="830" y="95" width="120" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Autenticacion y Consentimiento -->
+        <mxCell id="msAuth" value="Autenticación y&#10;Consentimiento" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e67e22;strokeColor=#a04000;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="630" y="210" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dbAuth" value="BD Autenticación /&#10;Consentimiento" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#8e44ad;strokeColor=#5b2c6f;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="830" y="205" width="120" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Historial Clinico -->
+        <mxCell id="msHistorial" value="Historial Clínico" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16a085;strokeColor=#0e6655;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="630" y="320" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dbHistorial" value="BD Historial /&#10;Referencias" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#8e44ad;strokeColor=#5b2c6f;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="830" y="315" width="120" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Documentos y Examenes -->
+        <mxCell id="msDocs" value="Documentos y&#10;Exámenes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2980b9;strokeColor=#1b4f72;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="630" y="430" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dbDocs" value="BD / Almacenamiento&#10;Archivos Clínicos" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#8e44ad;strokeColor=#5b2c6f;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="830" y="425" width="120" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Busqueda de Pacientes -->
+        <mxCell id="msBusqueda" value="Búsqueda de&#10;Pacientes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c0392b;strokeColor=#7b241c;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="630" y="540" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dbBusqueda" value="BD / Índice de&#10;Búsqueda" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#8e44ad;strokeColor=#5b2c6f;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="830" y="535" width="120" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- External async services -->
+        <mxCell id="queue" value="Cola de Eventos&#10;(asíncrona)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7f8c8d;strokeColor=#4d5656;fontColor=#ffffff;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="205" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="notifService" value="Servicio de&#10;Notificaciones (correo)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f39c12;strokeColor=#9c640c;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="320" width="150" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Management / Orchestration bar -->
+        <mxCell id="mgmtBar" value="Management / Orchestration" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#3498db;verticalAlign=top;fontColor=#3498db;fontStyle=1;fontSize=14;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="200" y="700" width="800" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="svcRegistry" value="Registro de Servicios&#10;(descubrimiento de servicios)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#34495e;strokeColor=#1b2631;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="215" y="735" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="circuitBreaker" value="Cortacircuito&#10;(tolerancia a fallos)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#34495e;strokeColor=#1b2631;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="410" y="735" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="monitoring" value="Monitoreo /&#10;Observabilidad (logs, métricas)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#34495e;strokeColor=#1b2631;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="605" y="735" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="cicd" value="Configuración e&#10;Integración Continua" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#34495e;strokeColor=#1b2631;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="805" y="735" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Edges: client to gateway -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="actorPaciente" target="webapp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="actorMedico" target="webapp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="webapp" target="gateway">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Gateway to microservices -->
+        <mxCell id="e4" value="REST" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;exitX=1;exitY=0.2;entryX=0;entryY=0.5;" edge="1" parent="1" source="gateway" target="msGestion">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="REST" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;exitX=1;exitY=0.4;entryX=0;entryY=0.5;" edge="1" parent="1" source="gateway" target="msAuth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="REST" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;exitX=1;exitY=0.6;entryX=0;entryY=0.5;" edge="1" parent="1" source="gateway" target="msHistorial">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="REST" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;exitX=1;exitY=0.8;entryX=0;entryY=0.5;" edge="1" parent="1" source="gateway" target="msDocs">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="REST" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;exitX=1;exitY=1;entryX=0;entryY=0.5;" edge="1" parent="1" source="gateway" target="msBusqueda">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Microservices to their DBs -->
+        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="msGestion" target="dbGestion">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="msAuth" target="dbAuth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="msHistorial" target="dbHistorial">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="msDocs" target="dbDocs">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="msBusqueda" target="dbBusqueda">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Inter-service interactions -->
+        <mxCell id="e14" value="REST" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#e74c3c;exitX=0;exitY=0.3;entryX=0;entryY=0.7;" edge="1" parent="1" source="msBusqueda" target="msGestion">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" value="REST" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#e74c3c;exitX=0;exitY=0.7;entryX=0;entryY=0.9;" edge="1" parent="1" source="msBusqueda" target="msAuth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" value="REST" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#e74c3c;exitX=0;exitY=0.3;entryX=0;entryY=0.7;" edge="1" parent="1" source="msHistorial" target="msDocs">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" value="REST" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#e74c3c;exitX=0;exitY=0.7;entryX=0;entryY=0.9;" edge="1" parent="1" source="msHistorial" target="msAuth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e18" value="REST" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#e74c3c;exitX=0;exitY=0.7;entryX=0;entryY=0.3;" edge="1" parent="1" source="msGestion" target="msAuth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Async event flow -->
+        <mxCell id="e19" value="evento: acceso&#10;registrado" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;dashed=1;strokeColor=#7f8c8d;" edge="1" parent="1" source="msAuth" target="queue">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e20" value="asíncrono" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;dashed=1;strokeColor=#7f8c8d;" edge="1" parent="1" source="queue" target="notifService">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Gateway to management -->
+        <mxCell id="e21" value="descubrimiento de servicios" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;dashed=1;strokeColor=#95a5a6;" edge="1" parent="1" source="gateway" target="svcRegistry">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e22" value="métricas / logs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;dashed=1;strokeColor=#95a5a6;" edge="1" parent="1" source="gateway" target="monitoring">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Admin / DevOps -->
+        <mxCell id="e23" value="administración" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;dashed=1;" edge="1" parent="1" source="actorAdmin" target="mgmtBar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e24" value="integración continua, monitoreo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;dashed=1;" edge="1" parent="1" source="actorDevOps" target="mgmtBar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
