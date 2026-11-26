@@ -1,10 +1,10 @@
-package cl.duoc.nexusvital.ms_documentos;
+package cl.duoc.nexusvital.ms_usuarios;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MsDocumentosApplicationTests {
+class MsUsuariosApplicationTests {
 
 	@Test
 	void contextLoads() {
