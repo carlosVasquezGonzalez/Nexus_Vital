@@ -1,5 +1,6 @@
 package cl.duoc.nexusvital.ms_documentos.controller;
 
+import cl.duoc.nexusvital.ms_documentos.messaging.DocumentoEventPublisher;
 import cl.duoc.nexusvital.ms_documentos.model.Documento;
 import cl.duoc.nexusvital.ms_documentos.service.DocumentoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ public class DocumentoController {
     @Autowired
     private DocumentoService documentoService;
 
+    @Autowired
+    private DocumentoEventPublisher eventPublisher;
+
     @GetMapping
     public List<Documento> obtenerTodos() {
         return documentoService.obtenerTodos();
@@ -26,6 +30,8 @@ public class DocumentoController {
 
     @PostMapping
     public Documento crear(@RequestBody Documento documento) {
-        return documentoService.guardar(documento);
+        Documento guardado = documentoService.guardar(documento);
+        eventPublisher.publicar(guardado);
+        return guardado;
     }
 }

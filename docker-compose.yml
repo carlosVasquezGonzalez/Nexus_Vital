@@ -66,6 +66,10 @@ services:
   ms-documentos:
     image: carlos0801/ms-documentos:latest
     <<: *java-defaults
+    environment:
+     <<: *java-env
+      SQS_QUEUE_URL: "https://sqs.us-east-1.amazonaws.com/992382404591/nexus-historial-queue"
+      AWS_REGION: us-east-1
     ports:
       - "8084:8084"
     deploy: *java-deploy
