@@ -1,0 +1,86 @@
+version: "3.8"
+
+x-java: &java-defaults
+  environment: &java-env
+    DB_URL: "jdbc:mysql://mysql:3306/nexusvital_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+    DB_USER: root
+    DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  networks:
+    - nexus-net
+  deploy: &java-deploy
+    replicas: 2
+    placement:
+      constraints:
+        - node.role == worker
+    restart_policy:
+      condition: on-failure
+      delay: 10s
+      max_attempts: 5
+    update_config:
+      parallelism: 1
+      delay: 10s
+      order: start-first
+    resources:
+      limits:
+        memory: 450M
+
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: nexusvital_db
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - nexus-net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+
+  ms-autenticacion:
+    image: carlos0801/ms-autenticacion:latest
+    <<: *java-defaults
+    ports:
+      - "8083:8083"
+    deploy: *java-deploy
+
+  ms-usuarios:
+    image: carlos0801/ms-usuarios:latest
+    <<: *java-defaults
+    ports:
+      - "8081:8081"
+    deploy: *java-deploy
+
+  ms-historial:
+    image: carlos0801/ms-historial:latest
+    <<: *java-defaults
+    ports:
+      - "8082:8082"
+    deploy: *java-deploy
+
+  ms-documentos:
+    image: carlos0801/ms-documentos:latest
+    <<: *java-defaults
+    ports:
+      - "8084:8084"
+    deploy: *java-deploy
+
+  ms-busqueda:
+    image: carlos0801/ms-busqueda:latest
+    <<: *java-defaults
+    ports:
+      - "8085:8085"
+    deploy: *java-deploy
+
+networks:
+  nexus-net:
+    driver: overlay
+
+volumes:
+  mysql-data:
+
