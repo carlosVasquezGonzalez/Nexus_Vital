@@ -4,3 +4,7 @@ target/
 *.jar
 *.class
 lambda/function.zip
+
+.github/modernize/
+
+.github/modernize/
