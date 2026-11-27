@@ -20,9 +20,6 @@ env:
   STACK_NAME: nexus
 
 jobs:
-  # ------------------------------------------------------------------ CI: build y test
-  test:
-jobs:
   test:
     runs-on: ubuntu-latest
 
