@@ -19,7 +19,7 @@ x-java: &java-defaults
     update_config:
       parallelism: 1
       delay: 10s
-      order: start-first
+      order: stop-first
     resources:
       limits:
         memory: 450M
@@ -43,39 +43,39 @@ services:
         condition: on-failure
 
   ms-autenticacion:
-    image: carlos0801/ms-autenticacion:latest
+    image: carlos0801/ms-autenticacion:${TAG:-latest}
     <<: *java-defaults
     ports:
       - "8083:8083"
     deploy: *java-deploy
 
   ms-usuarios:
-    image: carlos0801/ms-usuarios:latest
+    image: carlos0801/ms-usuarios:${TAG:-latest}
     <<: *java-defaults
     ports:
       - "8081:8081"
     deploy: *java-deploy
 
   ms-historial:
-    image: carlos0801/ms-historial:latest
+    image: carlos0801/ms-historial:${TAG:-latest}
     <<: *java-defaults
     ports:
       - "8082:8082"
     deploy: *java-deploy
 
   ms-documentos:
-    image: carlos0801/ms-documentos:latest
+    image: carlos0801/ms-documentos:${TAG:-sqs-v1}
     <<: *java-defaults
     environment:
       <<: *java-env
-      SQS_QUEUE_URL: "https://sqs.us-east-1.amazonaws.com/<ACCOUNT_ID>/nexus-historial-queue"
+      SQS_QUEUE_URL: "${SQS_QUEUE_URL}"
       AWS_REGION: us-east-1
     ports:
       - "8084:8084"
     deploy: *java-deploy
 
   ms-busqueda:
-    image: carlos0801/ms-busqueda:latest
+    image: carlos0801/ms-busqueda:${TAG:-latest}
     <<: *java-defaults
     ports:
       - "8085:8085"

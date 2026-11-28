@@ -1,7 +1,7 @@
 package cl.duoc.nexusvital.ms_documentos.messaging;
 
 import cl.duoc.nexusvital.ms_documentos.model.Documento;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,4 +50,3 @@ public class DocumentoEventPublisher {
             log.error("No se pudo publicar en SQS", e);
         }
     }
-}

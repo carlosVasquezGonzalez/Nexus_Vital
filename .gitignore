@@ -1,10 +1,33 @@
+# Archivos de compilacion
 target/
-.idea/
-.vscode/
 *.jar
 *.class
+
+# Entornos de desarrollo
+.idea/
+.vscode/
+.github/modernize/
+
+# Archivos generados de Lambda
 lambda/function.zip
+__pycache__/
+*.pyc
 
-.github/modernize/
+# Variables de entorno y credenciales
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+.aws/
+.ssh/
 
-.github/modernize/
+# Archivos de respaldo
+*.bak
+*.backup
+
+# Archivos temporales y logs
+*.tmp
+*.log

@@ -21,14 +21,25 @@ env:
 
 jobs:
   test:
+    name: Pruebas (${{ matrix.service }})
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - ms-autenticacion
+          - ms-busqueda
+          - ms-documentos
+          - ms-historial
+          - ms-usuarios
 
     services:
       mysql:
         image: mysql:8.4
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: nexusvital_db
+          MYSQL_DATABASE: nexusvital_test_db
         ports:
           - 3306:3306
         options: >-
@@ -38,12 +49,33 @@ jobs:
           --health-retries=10
 
     env:
-      DB_URL: jdbc:mysql://127.0.0.1:3306/nexusvital_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      DB_USER: root
-      DB_PASSWORD: root
+      SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/nexusvital_test_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SQS_QUEUE_URL: ""
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Configurar Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: ${{ matrix.service }}/pom.xml
+
+      - name: Ejecutar pruebas automatizadas
+        working-directory: ${{ matrix.service }}
+        run: mvn -B clean test
+
+      - name: Guardar resultados de pruebas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pruebas-${{ matrix.service }}
+          path: ${{ matrix.service }}/target/surefire-reports/
   # ------------------------------------------------------------------ Imagen Docker (trazabilidad por SHA)
   build-push:
     name: Imagen (${{ matrix.service }})
@@ -81,6 +113,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      HISTORIAL_URL: http://${{ secrets.MANAGER_HOST }}:8082/api/historiales
     outputs:
       sqs_queue_url: ${{ steps.provision.outputs.sqs_queue_url }}
     steps:
@@ -110,11 +143,6 @@ jobs:
       - name: Calcular tag
         run: echo "TAG=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
 
-      - name: Fijar imágenes al SHA del commit
-        run: |
-          sed -i -E "s#(image: ${DOCKERHUB_USER}/ms-[a-z]+):latest#\1:${TAG}#" docker-compose.yml
-          grep 'image:' docker-compose.yml
-
       - name: Configurar SSH
         run: |
           install -m 700 -d ~/.ssh
@@ -130,28 +158,36 @@ jobs:
       - name: docker stack deploy
         run: |
           SSH_OPTS="-i $HOME/.ssh/nexus.pem -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20"
-          ssh $SSH_OPTS "ec2-user@${MANAGER_HOST}" "bash -s" <<EOF
-          set -euo pipefail
-          export MYSQL_ROOT_PASSWORD='${MYSQL_ROOT_PASSWORD}'
-          export SQS_QUEUE_URL='${SQS_QUEUE_URL}'
-          docker stack deploy -c ~/nexus-deploy/docker-compose.yml --prune ${STACK_NAME}
-          EOF
+          {
+            echo 'set -euo pipefail'
+            printf 'export TAG=%q\n' "$TAG"
+            printf 'export MYSQL_ROOT_PASSWORD=%q\n' "$MYSQL_ROOT_PASSWORD"
+            printf 'export SQS_QUEUE_URL=%q\n' "$SQS_QUEUE_URL"
+            printf 'docker stack deploy -c ~/nexus-deploy/docker-compose.yml --prune %q\n' "$STACK_NAME"
+          } | ssh $SSH_OPTS "ec2-user@${MANAGER_HOST}" "bash -s"
 
       - name: Esperar a que los servicios converjan
         run: |
           SSH_OPTS="-i $HOME/.ssh/nexus.pem -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20"
           ssh $SSH_OPTS "ec2-user@${MANAGER_HOST}" "bash -s" <<'EOF'
+          set -euo pipefail
+
           for i in $(seq 1 36); do
-            pending=$(docker stack services nexus --format '{{.Replicas}}' | awk -F'[/ ]' '$1!=$2' | wc -l)
-            if [ "$pending" -eq 0 ]; then
+            replicas=$(docker stack services nexus --format '{{.Replicas}}')
+            total=$(printf '%s\n' "$replicas" | grep -c '/' || true)
+            pending=$(printf '%s\n' "$replicas" | awk -F'[/ ]' '$1!=$2' | wc -l)
+
+            if [ "$total" -eq 6 ] && [ "$pending" -eq 0 ]; then
               echo "Todos los servicios convergieron"
               docker stack services nexus
               exit 0
             fi
+
             echo "Esperando convergencia ($i/36)..."
             sleep 10
           done
-          docker stack ps nexus --filter desired-state=running | head -20
+
+          docker stack ps nexus --filter desired-state=running
           exit 1
           EOF
 

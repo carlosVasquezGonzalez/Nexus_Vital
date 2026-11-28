@@ -5,6 +5,8 @@
 set -euo pipefail
 
 REGION="${AWS_DEFAULT_REGION:-us-east-1}"
+export AWS_DEFAULT_REGION="$REGION"
+export AWS_REGION="$REGION"
 QUEUE_NAME="${QUEUE_NAME:-nexus-historial-queue}"
 DLQ_NAME="${DLQ_NAME:-nexus-historial-dlq}"
 LAMBDA_NAME="${LAMBDA_NAME:-registra-historial}"
@@ -13,6 +15,7 @@ LAMBDA_RUNTIME="${LAMBDA_RUNTIME:-python3.12}"
 LAMBDA_ROLE_NAME="${LAMBDA_ROLE_NAME:-LabRole}"
 API_NAME="${API_NAME:-nexus-api}"
 API_STAGE="${API_STAGE:-prod}"
+HISTORIAL_URL="${HISTORIAL_URL:?Debes definir HISTORIAL_URL}"
 
 log() { echo "==> $*"; }
 
@@ -63,18 +66,43 @@ else
     --role "$ROLE_ARN" --timeout 30 --zip-file "fileb://$ZIP" >/dev/null
   aws lambda wait function-active --function-name "$LAMBDA_NAME"
   echo "    función creada"
-  echo "::warning::La Lambda se creó sin variables de entorno. Configura las que use lambda_function.py (por ejemplo la URL de ms-historial)."
 fi
+
+# Configurar variable de entorno de Lambda
+CURRENT_ENV=$(aws lambda get-function-configuration \
+  --function-name "$LAMBDA_NAME" \
+  --query 'Environment.Variables' --output json)
+
+LAMBDA_ENV=$(echo "$CURRENT_ENV" | jq -c \
+  --arg url "$HISTORIAL_URL" \
+  '{Variables: ((. // {}) + {HISTORIAL_URL: $url})}')
+
+aws lambda update-function-configuration \
+  --function-name "$LAMBDA_NAME" \
+  --environment "$LAMBDA_ENV" >/dev/null
+
+aws lambda wait function-updated --function-name "$LAMBDA_NAME"
+echo "    HISTORIAL_URL configurada"
 
 log "4/5 Trigger SQS -> Lambda"
 MAPPING=$(aws lambda list-event-source-mappings --function-name "$LAMBDA_NAME" \
   --event-source-arn "$QUEUE_ARN" --query 'EventSourceMappings[0].UUID' --output text)
+
 if [ "$MAPPING" = "None" ] || [ -z "$MAPPING" ]; then
   aws lambda create-event-source-mapping --function-name "$LAMBDA_NAME" \
-    --event-source-arn "$QUEUE_ARN" --batch-size 10 >/dev/null
-  echo "    mapping creado"
+    --event-source-arn "$QUEUE_ARN" --batch-size 10 --enabled >/dev/null
+  echo "    mapping creado y habilitado"
 else
-  echo "    mapping existente ($MAPPING)"
+  STATE=$(aws lambda get-event-source-mapping \
+    --uuid "$MAPPING" --query State --output text)
+
+  if [ "$STATE" = "Disabled" ]; then
+    aws lambda update-event-source-mapping \
+      --uuid "$MAPPING" --enabled >/dev/null
+    echo "    mapping habilitado nuevamente"
+  else
+    echo "    mapping existente ($MAPPING), estado: $STATE"
+  fi
 fi
 
 # ---------------------------------------------------------------- 3. API Gateway
@@ -85,16 +113,36 @@ if [ "$API_ID" = "None" ] || [ -z "$API_ID" ]; then
   exit 1
 fi
 
-# Garantiza que ningún método quede sin API key
+# Garantiza que todos los métodos requieran API key
 for ID in $(aws apigateway get-resources --rest-api-id "$API_ID" \
     --query "items[?resourceMethods!=null].id" --output text); do
-  REQ=$(aws apigateway get-method --rest-api-id "$API_ID" --resource-id "$ID" \
-    --http-method ANY --query apiKeyRequired --output text 2>/dev/null || echo "n/a")
-  if [ "$REQ" = "False" ] || [ "$REQ" = "None" ]; then
-    aws apigateway update-method --rest-api-id "$API_ID" --resource-id "$ID" \
-      --http-method ANY --patch-operations op=replace,path=/apiKeyRequired,value=true >/dev/null
-    echo "    método $ID ahora exige API key"
-  fi
+
+  METHODS=$(aws apigateway get-resource \
+    --rest-api-id "$API_ID" \
+    --resource-id "$ID" \
+    --query 'keys(resourceMethods)' --output text)
+
+  for METHOD in $METHODS; do
+    if [ "$METHOD" = "OPTIONS" ]; then
+      continue
+    fi
+
+    REQ=$(aws apigateway get-method \
+      --rest-api-id "$API_ID" \
+      --resource-id "$ID" \
+      --http-method "$METHOD" \
+      --query apiKeyRequired --output text)
+
+    if [ "$REQ" != "True" ]; then
+      aws apigateway update-method \
+        --rest-api-id "$API_ID" \
+        --resource-id "$ID" \
+        --http-method "$METHOD" \
+        --patch-operations op=replace,path=/apiKeyRequired,value=true >/dev/null
+
+      echo "    método $METHOD de $ID ahora exige API key"
+    fi
+  done
 done
 
 aws apigateway create-deployment --rest-api-id "$API_ID" --stage-name "$API_STAGE" \

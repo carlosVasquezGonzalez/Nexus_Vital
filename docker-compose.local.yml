@@ -1,0 +1,65 @@
+﻿x-java: &java-defaults
+  environment:
+    DB_URL: "jdbc:mysql://mysql:3306/nexusvital_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+    DB_USER: nexususer
+    DB_PASSWORD: ${MYSQL_PASSWORD}
+  networks:
+    - nexus-local
+  depends_on:
+    mysql:
+      condition: service_healthy
+
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: nexusvital_db
+      MYSQL_USER: nexususer
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql-local-data:/var/lib/mysql
+    networks:
+      - nexus-local
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  ms-usuarios:
+    <<: *java-defaults
+    image: carlos0801/ms-usuarios:latest
+    ports:
+      - "127.0.0.1:9081:8081"
+
+  ms-historial:
+    <<: *java-defaults
+    image: carlos0801/ms-historial:latest
+    ports:
+      - "127.0.0.1:9082:8082"
+
+  ms-autenticacion:
+    <<: *java-defaults
+    image: carlos0801/ms-autenticacion:latest
+    ports:
+      - "127.0.0.1:9083:8083"
+
+  ms-documentos:
+    <<: *java-defaults
+    image: carlos0801/ms-documentos:latest
+    ports:
+      - "127.0.0.1:9084:8084"
+
+  ms-busqueda:
+    <<: *java-defaults
+    image: carlos0801/ms-busqueda:latest
+    ports:
+      - "127.0.0.1:9085:8085"
+
+networks:
+  nexus-local:
+    driver: bridge
+
+volumes:
+  mysql-local-data:
