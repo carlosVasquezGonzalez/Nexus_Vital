@@ -50,3 +50,4 @@ public class DocumentoEventPublisher {
             log.error("No se pudo publicar en SQS", e);
         }
     }
+}
