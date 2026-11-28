@@ -87,4 +87,5 @@ networks:
 
 volumes:
   mysql-data:
-
+    external: true
+    name: nexus_mysql-recovery-data
